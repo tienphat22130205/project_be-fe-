@@ -11,6 +11,30 @@ export interface ITour extends Document {
   difficulty: 'easy' | 'medium' | 'difficult';
   images: string[];
   startDates: Date[];
+  tourCode?: string;
+  departures?: Array<{
+    startDate: Date;
+    endDate: Date;
+    availableSeats: number;
+    pricing: {
+      adult: number;
+      child: number;
+      infant: number;
+    };
+  }>;
+  itinerary?: Array<{
+    day: number;
+    title: string;
+    description: string;
+    meals: string[];
+    accommodation?: string;
+  }>;
+  policies?: {
+    cancellation?: string[];
+    payment?: string[];
+    groupDiscount?: string;
+    note?: string[];
+  };
   startLocation: {
     type: string;
     coordinates: number[];
@@ -87,6 +111,40 @@ const tourSchema = new Schema<ITour>(
         type: Date,
       },
     ],
+    tourCode: {
+      type: String,
+      trim: true,
+    },
+    departures: [
+      {
+        startDate: Date,
+        endDate: Date,
+        availableSeats: {
+          type: Number,
+          default: 0,
+        },
+        pricing: {
+          adult: Number,
+          child: Number,
+          infant: Number,
+        },
+      },
+    ],
+    itinerary: [
+      {
+        day: Number,
+        title: String,
+        description: String,
+        meals: [String],
+        accommodation: String,
+      },
+    ],
+    policies: {
+      cancellation: [String],
+      payment: [String],
+      groupDiscount: String,
+      note: [String],
+    },
     startLocation: {
       type: {
         type: String,
