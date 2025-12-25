@@ -1,5 +1,6 @@
 import { Booking, IBooking } from '../../entities/Booking';
 import { Tour } from '../../entities/Tour';
+import { AdditionalService } from '../../entities/AdditionalService';
 import { NotFoundError, BadRequestError } from '../../exceptions';
 
 export interface BookingQuery {
@@ -9,23 +10,45 @@ export interface BookingQuery {
   userId?: string;
 }
 
+export interface IPassengerInput {
+  fullName: string;
+  gender: 'male' | 'female' | 'other';
+  dateOfBirth: Date;
+  email: string;
+  phone: string;
+}
+
+export interface IAdditionalServiceInput {
+  serviceId: string;
+  quantity: number;
+}
+
+export interface CreateBookingData {
+  tourId: string;
+  startDate: Date;
+  numberOfPeople: number;
+  passengers: IPassengerInput[];
+  additionalServices?: IAdditionalServiceInput[];
+  discountCode?: string;
+  paymentType: '100%' | '50%';
+  customerInfo: {
+    fullName: string;
+    email: string;
+    phone: string;
+    address?: string;
+    notes?: string;
+  };
+}
+
 export class BookingService {
+  /**
+   * Tạo booking mới với tính năng thanh toán đầy đủ
+   */
   async createBooking(
     userId: string,
-    data: {
-      tourId: string;
-      startDate: Date;
-      numberOfPeople: number;
-      customerInfo: {
-        fullName: string;
-        email: string;
-        phone: string;
-        address?: string;
-        notes?: string;
-      };
-    }
+    data: CreateBookingData
   ): Promise<IBooking> {
-    // Check if tour exists
+    // 1. Kiểm tra tour tồn tại và còn hoạt động
     const tour = await Tour.findById(data.tourId);
     if (!tour) {
       throw new NotFoundError('Tour not found');
@@ -35,39 +58,177 @@ export class BookingService {
       throw new BadRequestError('Tour is not available');
     }
 
-    // Check if start date is valid
+    // 2. Kiểm tra ngày khởi hành hợp lệ (so sánh theo ngày, không cần match timestamp chính xác)
     const startDate = new Date(data.startDate);
-    const validStartDate = tour.startDates.find(
-      (date) => date.getTime() === startDate.getTime()
-    );
+    const startDateOnly = startDate.toISOString().split('T')[0]; // YYYY-MM-DD
+    
+    const validStartDate = tour.startDates.find((date) => {
+      const tourDateOnly = new Date(date).toISOString().split('T')[0];
+      return tourDateOnly === startDateOnly;
+    });
 
     if (!validStartDate) {
       throw new BadRequestError('Invalid start date for this tour');
     }
 
-    // Check if there are enough spots
+    // 3. Kiểm tra số lượng người
     if (data.numberOfPeople > tour.maxGroupSize) {
       throw new BadRequestError(
         `Number of people exceeds maximum group size of ${tour.maxGroupSize}`
       );
     }
 
-    // Calculate total price
-    const totalPrice = tour.price * data.numberOfPeople;
+    if (data.passengers.length !== data.numberOfPeople) {
+      throw new BadRequestError(
+        'Number of passengers must match number of people'
+      );
+    }
 
-    // Create booking
+    // 4. Tính giá cơ bản
+    const basePrice = tour.price * data.numberOfPeople;
+    let totalPrice = basePrice;
+    let surcharge = 0;
+
+    // 5. Xử lý dịch vụ cộng thêm
+    const bookingAdditionalServices = [];
+    if (data.additionalServices && data.additionalServices.length > 0) {
+      for (const serviceInput of data.additionalServices) {
+        const service = await AdditionalService.findOne({
+          _id: serviceInput.serviceId,
+          tour: data.tourId,
+          isActive: true,
+        });
+
+        if (!service) {
+          throw new NotFoundError(
+            `Additional service ${serviceInput.serviceId} not found`
+          );
+        }
+
+        if (service.maxQuantity && serviceInput.quantity > service.maxQuantity) {
+          throw new BadRequestError(
+            `Quantity exceeds maximum allowed for service ${service.name}`
+          );
+        }
+
+        const subtotal = service.price * serviceInput.quantity;
+        bookingAdditionalServices.push({
+          service: service._id,
+          quantity: serviceInput.quantity,
+          price: service.price,
+          subtotal,
+        });
+
+        totalPrice += subtotal;
+      }
+    }
+
+    // 6. Áp dụng mã giảm giá (nếu có)
+    let discountAmount = 0;
+    if (data.discountCode) {
+      // TODO: Implement discount code validation
+      // Tạm thời để trống, có thể tích hợp với hệ thống mã giảm giá sau
+      discountAmount = 0;
+    }
+
+    // 7. Tính tổng tiền cuối cùng
+    totalPrice = totalPrice + surcharge - discountAmount;
+
+    // 8. Tạo booking
     const booking = await Booking.create({
       tour: data.tourId,
       user: userId,
       startDate: data.startDate,
       numberOfPeople: data.numberOfPeople,
+      basePrice,
       totalPrice,
+      passengers: data.passengers,
+      additionalServices: bookingAdditionalServices,
+      discountCode: data.discountCode,
+      discountAmount,
+      surcharge,
+      paymentType: data.paymentType,
       customerInfo: data.customerInfo,
+      status: 'pending',
+      paymentStatus: 'pending',
     });
 
     await booking.populate('tour user');
 
     return booking;
+  }
+
+  /**
+   * Tính toán giá booking (dùng để preview trước khi tạo)
+   */
+  async calculateBookingPrice(data: {
+    tourId: string;
+    numberOfPeople: number;
+    additionalServices?: IAdditionalServiceInput[];
+    discountCode?: string;
+  }): Promise<{
+    basePrice: number;
+    additionalServicesTotal: number;
+    discountAmount: number;
+    surcharge: number;
+    totalPrice: number;
+    breakdown: {
+      tourPrice: number;
+      pricePerPerson: number;
+      services: Array<{
+        name: string;
+        price: number;
+        quantity: number;
+        subtotal: number;
+      }>;
+    };
+  }> {
+    const tour = await Tour.findById(data.tourId);
+    if (!tour) {
+      throw new NotFoundError('Tour not found');
+    }
+
+    const basePrice = tour.price * data.numberOfPeople;
+    let additionalServicesTotal = 0;
+    const servicesBreakdown = [];
+
+    if (data.additionalServices && data.additionalServices.length > 0) {
+      for (const serviceInput of data.additionalServices) {
+        const service = await AdditionalService.findById(serviceInput.serviceId);
+        if (service) {
+          const subtotal = service.price * serviceInput.quantity;
+          additionalServicesTotal += subtotal;
+          servicesBreakdown.push({
+            name: service.name,
+            price: service.price,
+            quantity: serviceInput.quantity,
+            subtotal,
+          });
+        }
+      }
+    }
+
+    let discountAmount = 0;
+    if (data.discountCode) {
+      // TODO: Implement discount validation
+      discountAmount = 0;
+    }
+
+    const surcharge = 0; // TODO: Implement surcharge logic if needed
+    const totalPrice = basePrice + additionalServicesTotal + surcharge - discountAmount;
+
+    return {
+      basePrice,
+      additionalServicesTotal,
+      discountAmount,
+      surcharge,
+      totalPrice,
+      breakdown: {
+        tourPrice: basePrice,
+        pricePerPerson: tour.price,
+        services: servicesBreakdown,
+      },
+    };
   }
 
   async getBookings(query: BookingQuery): Promise<{

@@ -11,12 +11,12 @@ router.get('/', tourController.getTours);
 router.get('/featured', tourController.getFeaturedTours);
 router.get('/popular', tourController.getPopularTours);
 router.get('/stats', tourController.getTourStats);
+router.get('/:id/related', tourController.getRelatedTours);
 router.get('/:id', tourController.getTourById);
 
 // Protected routes - Admin only
-router.use(authenticate, authorize('admin'));
-router.post('/', validate(createTourValidation), tourController.createTour);
-router.put('/:id', validate(updateTourValidation), tourController.updateTour);
-router.delete('/:id', tourController.deleteTour);
+router.post('/', authenticate, authorize('admin'), validate(createTourValidation), tourController.createTour);
+router.put('/:id', authenticate, authorize('admin'), validate(updateTourValidation), tourController.updateTour);
+router.delete('/:id', authenticate, authorize('admin'), tourController.deleteTour);
 
 export default router;

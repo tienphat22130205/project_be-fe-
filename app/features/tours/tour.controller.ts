@@ -121,6 +121,22 @@ export class TourController {
       next(error);
     }
   }
+
+  async getRelatedTours(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { id } = req.params;
+      const limit = parseInt(req.query.limit as string) || 4;
+      
+      const tours = await tourService.getRelatedTours(id, limit);
+
+      res.status(200).json({
+        status: 'success',
+        data: { tours },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default new TourController();

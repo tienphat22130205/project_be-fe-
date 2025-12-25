@@ -12,6 +12,8 @@ import { errorHandler, notFound } from './middlewares/error.middleware';
 import authRoutes from './features/auth/auth.routes';
 import tourRoutes from './features/tours/tour.routes';
 import bookingRoutes from './features/bookings/booking.routes';
+import paymentRoutes from './features/payments/payment.routes';
+import additionalServiceRoutes from './features/additionalServices/additionalService.routes';
 
 class App {
   public app: Application;
@@ -62,8 +64,10 @@ class App {
 
     // API routes
     this.app.use('/api/auth', authRoutes);
+    this.app.use('/api', additionalServiceRoutes); // Đăng ký trước để bắt route /api/tours/:id/additional-services
     this.app.use('/api/tours', tourRoutes);
     this.app.use('/api/bookings', bookingRoutes);
+    this.app.use('/api/payments', paymentRoutes);
 
     // Root route
     this.app.get('/', (_req: Request, res: Response) => {

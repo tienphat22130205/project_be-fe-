@@ -4,6 +4,7 @@ import { authenticate, authorize } from '../../middlewares/auth.middleware';
 import { validate } from '../../middlewares/validation.middleware';
 import {
   createBookingValidation,
+  calculatePriceValidation,
   updateBookingStatusValidation,
 } from './booking.validation';
 
@@ -13,6 +14,7 @@ const router = Router();
 router.use(authenticate);
 
 // User routes
+router.post('/calculate-price', validate(calculatePriceValidation), bookingController.calculatePrice);
 router.post('/', validate(createBookingValidation), bookingController.createBooking);
 router.get('/my-bookings', bookingController.getUserBookings);
 router.get('/:id', bookingController.getBookingById);

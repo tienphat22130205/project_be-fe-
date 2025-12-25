@@ -15,6 +15,81 @@ export interface TourQuery {
 }
 
 export class TourService {
+  /**
+   * Helper function to adjust tour dates to future dates
+   * Moves dates to current or next year automatically
+   */
+  private adjustTourDatesToFuture(tour: any): any {
+    const now = new Date();
+    const currentYear = now.getFullYear();
+
+    // Adjust startDates array
+    if (tour.startDates && Array.isArray(tour.startDates)) {
+      tour.startDates = tour.startDates.map((date: Date) => {
+        const originalDate = new Date(date);
+        const originalMonth = originalDate.getMonth();
+        const originalDay = originalDate.getDate();
+        
+        // Create new date with current/next year
+        let newDate = new Date(currentYear, originalMonth, originalDay);
+        
+        // If the date has passed this year, move to next year
+        if (newDate < now) {
+          newDate = new Date(currentYear + 1, originalMonth, originalDay);
+        }
+        
+        return newDate;
+      });
+    }
+
+    // Adjust departures array
+    if (tour.departures && Array.isArray(tour.departures)) {
+      tour.departures = tour.departures.map((departure: any) => {
+        const startDate = new Date(departure.startDate);
+        const endDate = new Date(departure.endDate);
+        
+        const startMonth = startDate.getMonth();
+        const startDay = startDate.getDate();
+        const endMonth = endDate.getMonth();
+        const endDay = endDate.getDate();
+        
+        // Adjust start date
+        let newStartDate = new Date(currentYear, startMonth, startDay);
+        if (newStartDate < now) {
+          newStartDate = new Date(currentYear + 1, startMonth, startDay);
+        }
+        
+        // Adjust end date (same year as start date)
+        const yearToUse = newStartDate.getFullYear();
+        let newEndDate = new Date(yearToUse, endMonth, endDay);
+        
+        // If end date is before start date, it means it crosses year boundary
+        if (newEndDate < newStartDate) {
+          newEndDate = new Date(yearToUse + 1, endMonth, endDay);
+        }
+        
+        return {
+          ...departure,
+          startDate: newStartDate,
+          endDate: newEndDate,
+        };
+      });
+      
+      // Filter out departures that have passed and no available seats
+      tour.departures = tour.departures.filter((dep: any) => {
+        return new Date(dep.startDate) >= now || dep.availableSeats > 0;
+      });
+    }
+
+    return tour;
+  }
+
+  /**
+   * Apply date adjustment to array of tours
+   */
+  private adjustToursDatesToFuture(tours: any[]): any[] {
+    return tours.map(tour => this.adjustTourDatesToFuture(tour));
+  }
   async createTour(data: Partial<ITour>): Promise<ITour> {
     const tour = await Tour.create(data);
     return tour;
@@ -85,8 +160,11 @@ export class TourService {
       Tour.countDocuments(filter),
     ]);
 
+    // Adjust dates to future
+    const adjustedTours = this.adjustToursDatesToFuture(tours.map(t => t.toObject()));
+
     return {
-      tours,
+      tours: adjustedTours,
       total,
       page,
       totalPages: Math.ceil(total / limit),
@@ -100,7 +178,10 @@ export class TourService {
       throw new NotFoundError('Tour not found');
     }
 
-    return tour;
+    // Adjust dates to future
+    const adjustedTour = this.adjustTourDatesToFuture(tour.toObject());
+
+    return adjustedTour as ITour;
   }
 
   async updateTour(tourId: string, data: Partial<ITour>): Promise<ITour> {
@@ -134,7 +215,10 @@ export class TourService {
       .limit(limit)
       .populate('guides', 'fullName email avatar');
 
-    return tours;
+    // Adjust dates to future
+    const adjustedTours = this.adjustToursDatesToFuture(tours.map(t => t.toObject()));
+
+    return adjustedTours as ITour[];
   }
 
   async getPopularTours(limit: number = 6): Promise<ITour[]> {
@@ -143,7 +227,10 @@ export class TourService {
       .limit(limit)
       .populate('guides', 'fullName email avatar');
 
-    return tours;
+    // Adjust dates to future
+    const adjustedTours = this.adjustToursDatesToFuture(tours.map(t => t.toObject()));
+
+    return adjustedTours as ITour[];
   }
 
   async searchToursByLocation(
@@ -163,7 +250,10 @@ export class TourService {
       },
     }).populate('guides', 'fullName email avatar');
 
-    return tours;
+    // Adjust dates to future
+    const adjustedTours = this.adjustToursDatesToFuture(tours.map(t => t.toObject()));
+
+    return adjustedTours as ITour[];
   }
 
   async getTourStats(): Promise<any> {
@@ -187,6 +277,91 @@ export class TourService {
     ]);
 
     return stats;
+  }
+
+  async getRelatedTours(tourId: string, limit: number = 4): Promise<ITour[]> {
+    // Get the current tour
+    const currentTour = await Tour.findById(tourId);
+
+    if (!currentTour) {
+      throw new NotFoundError('Tour not found');
+    }
+
+    // Calculate price range (±30%)
+    const priceRange = currentTour.price * 0.3;
+    const minPrice = currentTour.price - priceRange;
+    const maxPrice = currentTour.price + priceRange;
+
+    // Find related tours based on:
+    // 1. Same destination (highest priority)
+    // 2. Same category
+    // 3. Similar price range
+    // 4. Exclude the current tour
+    const relatedTours = await Tour.aggregate([
+      {
+        $match: {
+          _id: { $ne: currentTour._id },
+          isActive: true,
+        },
+      },
+      {
+        $addFields: {
+          relevanceScore: {
+            $add: [
+              // Same destination: +3 points
+              {
+                $cond: [
+                  { $eq: ['$destination', currentTour.destination] },
+                  3,
+                  0,
+                ],
+              },
+              // Same category: +2 points
+              {
+                $cond: [
+                  { $eq: ['$category', currentTour.category] },
+                  2,
+                  0,
+                ],
+              },
+              // Similar price: +1 point
+              {
+                $cond: [
+                  {
+                    $and: [
+                      { $gte: ['$price', minPrice] },
+                      { $lte: ['$price', maxPrice] },
+                    ],
+                  },
+                  1,
+                  0,
+                ],
+              },
+            ],
+          },
+        },
+      },
+      {
+        $match: {
+          relevanceScore: { $gte: 1 }, // At least one matching criterion
+        },
+      },
+      {
+        $sort: {
+          relevanceScore: -1,
+          rating: -1,
+          ratingsQuantity: -1,
+        },
+      },
+      {
+        $limit: limit,
+      },
+    ]);
+
+    // Adjust dates to future
+    const adjustedTours = this.adjustToursDatesToFuture(relatedTours);
+
+    return adjustedTours as ITour[];
   }
 }
 

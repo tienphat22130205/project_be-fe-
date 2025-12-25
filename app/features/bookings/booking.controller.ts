@@ -6,18 +6,26 @@ export class BookingController {
   async createBooking(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!._id.toString();
-      const { tourId, startDate, numberOfPeople, customerInfo } = req.body;
+      const bookingData = req.body;
 
-      const booking = await bookingService.createBooking(userId, {
-        tourId,
-        startDate,
-        numberOfPeople,
-        customerInfo,
-      });
+      const booking = await bookingService.createBooking(userId, bookingData);
 
       res.status(201).json({
         status: 'success',
         data: { booking },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async calculatePrice(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const priceCalculation = await bookingService.calculateBookingPrice(req.body);
+
+      res.status(200).json({
+        status: 'success',
+        data: priceCalculation,
       });
     } catch (error) {
       next(error);
