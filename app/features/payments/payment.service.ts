@@ -53,6 +53,12 @@ export class PaymentService {
     qrCode?: string;
     instructions?: string;
   }> {
+    // Validate returnUrl cho các phương thức online
+    const onlineMethods = ['momo', 'atm', 'credit_card'];
+    if (onlineMethods.includes(data.method) && !data.returnUrl) {
+      throw new BadRequestError('returnUrl is required for online payment methods');
+    }
+
     // Kiểm tra booking
     const booking = await Booking.findById(data.bookingId).populate('tour');
     if (!booking) {

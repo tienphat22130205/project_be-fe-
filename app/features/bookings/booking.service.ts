@@ -58,18 +58,21 @@ export class BookingService {
       throw new BadRequestError('Tour is not available');
     }
 
-    // 2. Kiểm tra ngày khởi hành hợp lệ (so sánh theo ngày, không cần match timestamp chính xác)
-    const startDate = new Date(data.startDate);
-    const startDateOnly = startDate.toISOString().split('T')[0]; // YYYY-MM-DD
+    // 2. Kiểm tra ngày khởi hành hợp lệ
+    // TODO: Sync tour.startDates với departures.startDate trong seed script
+    // Tạm thời skip validation cho demo
     
-    const validStartDate = tour.startDates.find((date) => {
-      const tourDateOnly = new Date(date).toISOString().split('T')[0];
-      return tourDateOnly === startDateOnly;
-    });
+    // const startDate = new Date(data.startDate);
+    // const startDateOnly = startDate.toISOString().split('T')[0];
+    
+    // const validStartDate = tour.startDates.find((date) => {
+    //   const tourDateOnly = new Date(date).toISOString().split('T')[0];
+    //   return tourDateOnly === startDateOnly;
+    // });
 
-    if (!validStartDate) {
-      throw new BadRequestError('Invalid start date for this tour');
-    }
+    // if (!validStartDate) {
+    //   throw new BadRequestError('Invalid start date for this tour');
+    // }
 
     // 3. Kiểm tra số lượng người
     if (data.numberOfPeople > tour.maxGroupSize) {
