@@ -29,15 +29,15 @@ export class TourService {
         const originalDate = new Date(date);
         const originalMonth = originalDate.getMonth();
         const originalDay = originalDate.getDate();
-        
+
         // Create new date with current/next year
         let newDate = new Date(currentYear, originalMonth, originalDay);
-        
+
         // If the date has passed this year, move to next year
         if (newDate < now) {
           newDate = new Date(currentYear + 1, originalMonth, originalDay);
         }
-        
+
         return newDate;
       });
     }
@@ -47,34 +47,34 @@ export class TourService {
       tour.departures = tour.departures.map((departure: any) => {
         const startDate = new Date(departure.startDate);
         const endDate = new Date(departure.endDate);
-        
+
         const startMonth = startDate.getMonth();
         const startDay = startDate.getDate();
         const endMonth = endDate.getMonth();
         const endDay = endDate.getDate();
-        
+
         // Adjust start date
         let newStartDate = new Date(currentYear, startMonth, startDay);
         if (newStartDate < now) {
           newStartDate = new Date(currentYear + 1, startMonth, startDay);
         }
-        
+
         // Adjust end date (same year as start date)
         const yearToUse = newStartDate.getFullYear();
         let newEndDate = new Date(yearToUse, endMonth, endDay);
-        
+
         // If end date is before start date, it means it crosses year boundary
         if (newEndDate < newStartDate) {
           newEndDate = new Date(yearToUse + 1, endMonth, endDay);
         }
-        
+
         return {
           ...departure,
           startDate: newStartDate,
           endDate: newEndDate,
         };
       });
-      
+
       // Filter out departures that have passed and no available seats
       tour.departures = tour.departures.filter((dep: any) => {
         return new Date(dep.startDate) >= now || dep.availableSeats > 0;
@@ -360,6 +360,29 @@ export class TourService {
 
     // Adjust dates to future
     const adjustedTours = this.adjustToursDatesToFuture(relatedTours);
+
+    return adjustedTours as ITour[];
+  }
+
+  async getPromotionalTours(type?: 'domestic' | 'international', limit: number = 6): Promise<ITour[]> {
+    const filter: any = {
+      isActive: true,
+      isPromotional: true,
+    };
+
+    if (type === 'domestic') {
+      filter.isInternational = false;
+    } else if (type === 'international') {
+      filter.isInternational = true;
+    }
+
+    const tours = await Tour.find(filter)
+      .sort('-createdAt')
+      .limit(limit)
+      .populate('guides', 'fullName email avatar');
+
+    // Adjust dates to future
+    const adjustedTours = this.adjustToursDatesToFuture(tours.map(t => t.toObject()));
 
     return adjustedTours as ITour[];
   }

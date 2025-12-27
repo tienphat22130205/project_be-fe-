@@ -126,8 +126,23 @@ export class TourController {
     try {
       const { id } = req.params;
       const limit = parseInt(req.query.limit as string) || 4;
-      
       const tours = await tourService.getRelatedTours(id, limit);
+
+      res.status(200).json({
+        status: 'success',
+        data: { tours },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getPromotionalTours(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const type = req.query.type as 'domestic' | 'international' | undefined;
+      const limit = parseInt(req.query.limit as string) || 6;
+
+      const tours = await tourService.getPromotionalTours(type, limit);
 
       res.status(200).json({
         status: 'success',

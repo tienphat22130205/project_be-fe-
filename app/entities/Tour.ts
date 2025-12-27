@@ -56,6 +56,8 @@ export interface ITour extends Document {
   category: string;
   includes: string[];
   excludes: string[];
+  isInternational: boolean;
+  isPromotional: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -203,6 +205,14 @@ const tourSchema = new Schema<ITour>(
       type: String,
       required: [true, 'Tour must have a category'],
       trim: true,
+    },
+    isInternational: {
+      type: Boolean,
+      default: false,
+    },
+    isPromotional: {
+      type: Boolean,
+      default: false,
     },
     includes: [
       {

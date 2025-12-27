@@ -11,6 +11,7 @@ router.get('/', tourController.getTours);
 router.get('/featured', tourController.getFeaturedTours);
 router.get('/popular', tourController.getPopularTours);
 router.get('/stats', tourController.getTourStats);
+router.get('/promotional', tourController.getPromotionalTours);
 router.get('/:id/related', tourController.getRelatedTours);
 router.get('/:id', tourController.getTourById);
 
