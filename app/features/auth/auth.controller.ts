@@ -95,12 +95,16 @@ export class AuthController {
   async updateProfile(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!._id.toString();
-      const { fullName, phone, avatar } = req.body;
+      const { fullName, phone, avatar, dateOfBirth, gender, address, taxId } = req.body;
 
       const user = await authService.updateProfile(userId, {
         fullName,
         phone,
         avatar,
+        dateOfBirth,
+        gender,
+        address,
+        taxId,
       });
 
       res.status(200).json({

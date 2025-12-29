@@ -22,6 +22,10 @@ export const updateProfileValidation = [
   body('fullName').optional().trim().notEmpty().withMessage('Full name cannot be empty'),
   body('phone').optional().isMobilePhone('any').withMessage('Please provide a valid phone number'),
   body('avatar').optional().isURL().withMessage('Avatar must be a valid URL'),
+  body('dateOfBirth').optional().isISO8601().toDate().withMessage('Please provide a valid date of birth'),
+  body('gender').optional().isIn(['Nam', 'Nữ', 'Khác']).withMessage('Invalid gender'),
+  body('address').optional().trim(),
+  body('taxId').optional().trim(),
 ];
 
 export const changePasswordValidation = [

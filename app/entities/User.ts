@@ -9,6 +9,10 @@ export interface IUser extends Document {
   phone?: string;
   role: 'user' | 'admin';
   avatar?: string;
+  dateOfBirth?: Date;
+  gender?: string;
+  address?: string;
+  taxId?: string;
   isActive: boolean;
   refreshTokens: string[];
   createdAt: Date;
@@ -48,6 +52,21 @@ const userSchema = new Schema<IUser>(
     },
     avatar: {
       type: String,
+    },
+    dateOfBirth: {
+      type: Date,
+    },
+    gender: {
+      type: String,
+      enum: ['Nam', 'Nữ', 'Khác'],
+    },
+    address: {
+      type: String,
+      trim: true,
+    },
+    taxId: {
+      type: String,
+      trim: true,
     },
     isActive: {
       type: Boolean,
