@@ -15,6 +15,13 @@ export interface IUser extends Document {
   taxId?: string;
   isActive: boolean;
   refreshTokens: string[];
+  favoriteTours: Types.ObjectId[];
+  vouchers: {
+    voucher: Types.ObjectId;
+    assignedAt: Date;
+    isUsed: boolean;
+    usedAt?: Date;
+  }[];
   createdAt: Date;
   updatedAt: Date;
   comparePassword(candidatePassword: string): Promise<boolean>;
@@ -75,6 +82,29 @@ const userSchema = new Schema<IUser>(
     refreshTokens: [
       {
         type: String,
+      },
+    ],
+    favoriteTours: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Tour',
+      },
+    ],
+    vouchers: [
+      {
+        voucher: {
+          type: Schema.Types.ObjectId,
+          ref: 'Voucher',
+        },
+        assignedAt: {
+          type: Date,
+          default: Date.now,
+        },
+        isUsed: {
+          type: Boolean,
+          default: false,
+        },
+        usedAt: Date,
       },
     ],
   },

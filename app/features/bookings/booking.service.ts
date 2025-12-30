@@ -2,6 +2,7 @@ import { Booking, IBooking } from '../../entities/Booking';
 import { Tour } from '../../entities/Tour';
 import { AdditionalService } from '../../entities/AdditionalService';
 import { NotFoundError, BadRequestError } from '../../exceptions';
+import voucherService from '../vouchers/vouchers.service';
 
 export interface BookingQuery {
   page?: number;
@@ -61,10 +62,10 @@ export class BookingService {
     // 2. Kiểm tra ngày khởi hành hợp lệ
     // TODO: Sync tour.startDates với departures.startDate trong seed script
     // Tạm thời skip validation cho demo
-    
+
     // const startDate = new Date(data.startDate);
     // const startDateOnly = startDate.toISOString().split('T')[0];
-    
+
     // const validStartDate = tour.startDates.find((date) => {
     //   const tourDateOnly = new Date(date).toISOString().split('T')[0];
     //   return tourDateOnly === startDateOnly;
@@ -129,13 +130,23 @@ export class BookingService {
     // 6. Áp dụng mã giảm giá (nếu có)
     let discountAmount = 0;
     if (data.discountCode) {
-      // TODO: Implement discount code validation
-      // Tạm thời để trống, có thể tích hợp với hệ thống mã giảm giá sau
-      discountAmount = 0;
+      try {
+        const voucherResult = await voucherService.validateVoucher(
+          data.discountCode,
+          userId,
+          totalPrice
+        );
+        if (voucherResult.isValid) {
+          discountAmount = voucherResult.discountAmount;
+        }
+      } catch (error: any) {
+        throw new BadRequestError(error.message || 'Invalid discount code');
+      }
     }
 
     // 7. Tính tổng tiền cuối cùng
     totalPrice = totalPrice + surcharge - discountAmount;
+    if (totalPrice < 0) totalPrice = 0;
 
     // 8. Tạo booking
     const booking = await Booking.create({
@@ -155,6 +166,11 @@ export class BookingService {
       status: 'pending',
       paymentStatus: 'pending',
     });
+
+    // 9. Record voucher usage
+    if (data.discountCode && discountAmount > 0) {
+      await voucherService.recordVoucherUsage(userId, data.discountCode);
+    }
 
     await booking.populate('tour user');
 

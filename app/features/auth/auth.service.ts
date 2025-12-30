@@ -6,6 +6,8 @@ import {
   UnauthorizedError,
   NotFoundError,
 } from '../../exceptions';
+import { Voucher } from '../../entities/Voucher';
+import voucherService from '../vouchers/vouchers.service';
 
 export class AuthService {
   private generateToken(userId: string): string {
@@ -42,6 +44,21 @@ export class AuthService {
     // Save refresh token
     user.refreshTokens.push(refreshToken);
     await user.save();
+
+    // Assign welcome voucher if exists
+    try {
+      const welcomeVoucher = await Voucher.findOne({
+        trigger: 'welcome',
+        isActive: true,
+      });
+
+      if (welcomeVoucher && welcomeVoucher.usageLimit > 0) {
+        await voucherService.assignVoucher(user._id.toString(), welcomeVoucher.code);
+      }
+    } catch (error) {
+      // Ignore error if voucher assignment fails (should not block registration)
+      console.error('Failed to assign welcome voucher', error);
+    }
 
     return { user, accessToken, refreshToken };
   }

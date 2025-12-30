@@ -14,6 +14,8 @@ import tourRoutes from './features/tours/tour.routes';
 import bookingRoutes from './features/bookings/booking.routes';
 import paymentRoutes from './features/payments/payment.routes';
 import additionalServiceRoutes from './features/additionalServices/additionalService.routes';
+import favoriteRoutes from './features/favorites/favorites.routes';
+import voucherRoutes from './features/vouchers/vouchers.routes';
 
 class App {
   public app: Application;
@@ -68,6 +70,8 @@ class App {
     this.app.use('/api/tours', tourRoutes);
     this.app.use('/api/bookings', bookingRoutes);
     this.app.use('/api/payments', paymentRoutes);
+    this.app.use('/api/favorites', favoriteRoutes);
+    this.app.use('/api/vouchers', voucherRoutes);
 
     // Root route
     this.app.get('/', (_req: Request, res: Response) => {
