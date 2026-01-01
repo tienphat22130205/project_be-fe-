@@ -12,6 +12,10 @@ router.get('/featured', tourController.getFeaturedTours);
 router.get('/popular', tourController.getPopularTours);
 router.get('/stats', tourController.getTourStats);
 router.get('/promotional', tourController.getPromotionalTours);
+router.get('/regions', tourController.getRegions);
+router.get('/regions/:region/provinces', tourController.getProvincesByRegion);
+router.get('/regions/:region/tours', tourController.getToursByRegion);
+router.get('/provinces/:province/tours', tourController.getToursByProvince);
 router.get('/:id/related', tourController.getRelatedTours);
 router.get('/:id', tourController.getTourById);
 

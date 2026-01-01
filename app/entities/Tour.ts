@@ -58,6 +58,9 @@ export interface ITour extends Document {
   excludes: string[];
   isInternational: boolean;
   isPromotional: boolean;
+  region?: Types.ObjectId; // Reference to Region (only for domestic tours)
+  province?: Types.ObjectId; // Reference to Province (only for domestic tours)
+  country?: Types.ObjectId; // Reference to Country (only for international tours)
   createdAt: Date;
   updatedAt: Date;
 }
@@ -224,6 +227,18 @@ const tourSchema = new Schema<ITour>(
         type: String,
       },
     ],
+    region: {
+      type: Schema.Types.ObjectId,
+      ref: 'Region',
+    },
+    province: {
+      type: Schema.Types.ObjectId,
+      ref: 'Province',
+    },
+    country: {
+      type: Schema.Types.ObjectId,
+      ref: 'Country',
+    },
   },
   {
     timestamps: true,
@@ -236,5 +251,7 @@ const tourSchema = new Schema<ITour>(
 tourSchema.index({ price: 1, rating: -1 });
 tourSchema.index({ destination: 1 });
 tourSchema.index({ startLocation: '2dsphere' });
+tourSchema.index({ region: 1, province: 1 });
+tourSchema.index({ country: 1 });
 
 export const Tour = model<ITour>('Tour', tourSchema);

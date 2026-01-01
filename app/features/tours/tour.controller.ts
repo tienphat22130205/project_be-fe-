@@ -29,6 +29,13 @@ export class TourController {
         maxPrice: req.query.maxPrice ? parseFloat(req.query.maxPrice as string) : undefined,
         category: req.query.category as string,
         featured: req.query.featured === 'true' ? true : undefined,
+        isInternational: req.query.isInternational === 'true' ? true : req.query.isInternational === 'false' ? false : undefined,
+        minDuration: req.query.minDuration ? parseInt(req.query.minDuration as string) : undefined,
+        maxDuration: req.query.maxDuration ? parseInt(req.query.maxDuration as string) : undefined,
+        minRating: req.query.minRating ? parseFloat(req.query.minRating as string) : undefined,
+        region: req.query.region as string,
+        province: req.query.province as string,
+        country: req.query.country as string,
       };
 
       const result = await tourService.getTours(query);
@@ -143,6 +150,63 @@ export class TourController {
       const limit = parseInt(req.query.limit as string) || 6;
 
       const tours = await tourService.getPromotionalTours(type, limit);
+
+      res.status(200).json({
+        status: 'success',
+        data: { tours },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getRegions(_req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const regions = await tourService.getRegions();
+
+      res.status(200).json({
+        status: 'success',
+        data: { regions },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getProvincesByRegion(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { region } = req.params;
+      const provinces = await tourService.getProvincesByRegion(region);
+
+      res.status(200).json({
+        status: 'success',
+        data: { provinces },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getToursByRegion(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { region } = req.params;
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
+      const tours = await tourService.getToursByRegion(region, limit);
+
+      res.status(200).json({
+        status: 'success',
+        data: { tours },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getToursByProvince(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { province } = req.params;
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : undefined;
+      const tours = await tourService.getToursByProvince(province, limit);
 
       res.status(200).json({
         status: 'success',
