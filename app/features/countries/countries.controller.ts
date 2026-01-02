@@ -161,4 +161,36 @@ export class CountriesController {
             next(error);
         }
     }
+
+    // GET /api/countries/continents - Lấy danh sách tất cả châu lục
+    async getContinents(_req: Request, res: Response, next: NextFunction) {
+        try {
+            // Lấy danh sách châu lục distinct có country active
+            const continents = await Country.aggregate([
+                { $match: { isActive: true } },
+                {
+                    $group: {
+                        _id: '$continent',
+                        countryCount: { $sum: 1 }
+                    }
+                },
+                { $sort: { _id: 1 } }
+            ]);
+
+            const result = continents.map(item => ({
+                continent: item._id,
+                countryCount: item.countryCount
+            }));
+
+            res.status(200).json({
+                status: 'success',
+                data: {
+                    continents: result,
+                    total: result.length
+                }
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
 }

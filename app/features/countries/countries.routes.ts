@@ -7,6 +7,9 @@ const controller = new CountriesController();
 // GET /api/countries - Lấy tất cả countries
 router.get('/', controller.getAllCountries.bind(controller));
 
+// GET /api/countries/continents - Lấy danh sách châu lục
+router.get('/continents', controller.getContinents.bind(controller));
+
 // GET /api/countries/continent/:continent - Lấy countries theo châu lục
 router.get('/continent/:continent', controller.getCountriesByContinent.bind(controller));
 

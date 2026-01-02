@@ -125,6 +125,12 @@ http://localhost:5000/api/countries
 ```
 **Kỳ vọng:** 9 countries với tourCount
 
+**Danh sách châu lục:**
+```
+http://localhost:5000/api/countries/continents
+```
+**Kỳ vọng:** Danh sách các châu lục có country (Châu Á, Châu Âu...) kèm countryCount
+
 **Country theo slug:**
 ```
 http://localhost:5000/api/countries/thai-lan
@@ -200,7 +206,7 @@ http://localhost:5000/api/tours?region=mien-bac&featured=true&maxPrice=5000000
 - ✅ **10 tours featured** (có ⭐)
 
 ### API Features
-- ✅ **4 Countries API endpoints** (list, detail, tours, by continent)
+- ✅ **5 Countries API endpoints** (list, continents, detail, tours, by continent)
 - ✅ **Advanced Search** - Tìm theo tên, region, province, country, price, duration, rating
 - ✅ **Full Tour filtering** (search, price, duration, rating, sort, pagination)
 - ✅ **Field đặc biệt**: `country` (ObjectId) thay vì `region/province`
