@@ -144,10 +144,10 @@ http://localhost:5000/api/countries/thai-lan/tours
 http://localhost:5000/api/countries/nhat-ban/tours
 ```
 
-**Countries theo châu lục:**
+**Countries theo http://localhost:5000/api/countries/continent/Châu%20Âuchâu lục:**
 ```
 http://localhost:5000/api/countries/continent/Châu%20Á
-http://localhost:5000/api/countries/continent/Châu%20Âu
+
 ```
 
 ---

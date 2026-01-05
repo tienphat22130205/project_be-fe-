@@ -96,8 +96,8 @@ class VoucherService {
                 throw new AppError('User not found', 404);
             }
 
-            // 1. Check if private voucher is owned
-            if (voucher.type === 'private' || voucher.type === 'system') {
+            // 1. Check if private voucher is owned (only for private, not system)
+            if (voucher.type === 'private') {
                 const userVoucher = user.vouchers.find(
                     (v) => v.voucher.toString() === voucher._id.toString()
                 );
@@ -111,17 +111,21 @@ class VoucherService {
                 }
             }
 
-            // 2. Check limit per user (for public vouchers)
-            // We need to count how many times this user has used this voucher from Bookings/Orders history. 
-            // For simplicity in this step, we can check the 'vouchers' array if we record public usage there too, 
-            // BUT typically public usage is tracked by just counting limits.
-            // However, usually "limitPerUser" implies we track history.
-            // For now, let's assume if it is public, we trust the caller has checked or we implement a check later.
-            // A better way is to track all usages in a separate collection or within User.vouchers even for public ones.
+            // 2. For system vouchers, check if user has it and not used (optional ownership)
+            if (voucher.type === 'system') {
+                const userVoucher = user.vouchers.find(
+                    (v) => v.voucher.toString() === voucher._id.toString()
+                );
 
-            // Let's rely on the recordVoucherUsage to handle the "marking" and here we just assume if it's private/system it's checked above.
-            // For public, we can add a check if needed by querying Bookings (expensive) or storing 'usedVouchers' list.
-            // For this MVP, let's stick to the private/system check primarily, and basic counts.
+                // If user has it in their collection, check if it's used
+                if (userVoucher && userVoucher.isUsed) {
+                    throw new AppError('You have already used this voucher', 400);
+                }
+                // If user doesn't have it, they can still use it (auto-assign logic)
+            }
+
+            // 3. Check limit per user (for public vouchers)
+            // For public vouchers, we rely on usage tracking in bookings
         }
 
         // Calculate discount

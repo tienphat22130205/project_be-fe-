@@ -250,6 +250,127 @@ const completeTours = [
         ]
     },
     {
+        title: 'KHUYẾN MÃI HOT: Hạ Long - Yên Tử 3N2Đ',
+        description: 'Combo siêu tiết kiệm: Khám phá Vịnh Hạ Long & chinh phục núi Yến Tử linh thiêng. Giá cực ưu đãi cho khách đặt sớm!',
+        destination: 'Quảng Ninh, Vietnam',
+        duration: 3,
+        price: 2990000,
+        maxGroupSize: 20,
+        difficulty: 'medium',
+        images: [
+            'https://images.unsplash.com/photo-1528127269322-539801943592?w=800',
+            'https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=800'
+        ],
+        tourCode: 'HA-LONG-YEN-TU-PROMO',
+        startDates: [new Date('2025-02-10'), new Date('2025-03-05'), new Date('2025-04-08')],
+        departures: generateDepartures(2990000),
+        itinerary: generateItinerary(3, 'Hạ Long - Yên Tử'),
+        policies: generatePolicies(),
+        startLocation: {
+            type: 'Point',
+            coordinates: [107.0844, 20.9101],
+            address: 'Quảng Ninh, Vietnam',
+            description: 'Bến tàu Bãi Cháy'
+        },
+        locations: [
+            {
+                type: 'Point',
+                coordinates: [107.0844, 20.9101],
+                address: 'Vịnh Hạ Long',
+                description: 'Vịnh Hạ Long',
+                day: 1
+            },
+            {
+                type: 'Point',
+                coordinates: [106.7583, 21.1128],
+                address: 'Núi Yên Tử',
+                description: 'Quần thể di tích Yên Tử',
+                day: 2
+            }
+        ],
+        rating: 4.8,
+        ratingsQuantity: 187,
+        category: 'Beach & Culture',
+        featured: true,
+        isInternational: false,
+        isPromotional: true,
+        region: 'Miền Bắc',
+        province: 'Quảng Ninh',
+        includes: [
+            'Vé tàu tham quan Vịnh Hạ Long',
+            'Vé cáp treo Yên Tử',
+            'Khách sạn 3-4* tại Hạ Long',
+            'Bữa ăn theo chương trình',
+            'Hướng dẫn viên nhiệt tình',
+            'Bảo hiểm du lịch'
+        ],
+        excludes: [
+            'Chi phí cá nhân',
+            'Đồ uống có cồn',
+            'Tiền tip cho hướng dẫn viên'
+        ]
+    },
+    {
+        title: 'ƯU ĐÃI ĐẶC BIỆT: Mộc Châu - Tú Lệ 3N2Đ',
+        description: 'Săn mây Mộc Châu, check-in đồi chè trái tim, thưởng thức sữa chua & gà đồi. Giá shock cho nhóm từ 4 người!',
+        destination: 'Sơn La, Vietnam',
+        duration: 3,
+        price: 2490000,
+        maxGroupSize: 18,
+        difficulty: 'easy',
+        images: [
+            'https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=800',
+            'https://images.unsplash.com/photo-1583417319070-4a69db38a482?w=800'
+        ],
+        tourCode: 'MOC-CHAU-PROMO',
+        startDates: [new Date('2025-02-20'), new Date('2025-03-15'), new Date('2025-04-18')],
+        departures: generateDepartures(2490000),
+        itinerary: generateItinerary(3, 'Mộc Châu - Tú Lệ'),
+        policies: generatePolicies(),
+        startLocation: {
+            type: 'Point',
+            coordinates: [104.6720, 20.8453],
+            address: 'Mộc Châu, Sơn La',
+            description: 'Trung tâm Mộc Châu'
+        },
+        locations: [
+            {
+                type: 'Point',
+                coordinates: [104.6720, 20.8453],
+                address: 'Đồi chè Mộc Châu',
+                description: 'Đồi chè trái tim',
+                day: 1
+            },
+            {
+                type: 'Point',
+                coordinates: [104.3956, 21.4322],
+                address: 'Tú Lệ',
+                description: 'Thung lũng Tú Lệ',
+                day: 2
+            }
+        ],
+        rating: 4.7,
+        ratingsQuantity: 142,
+        category: 'Nature & Photography',
+        featured: true,
+        isInternational: false,
+        isPromotional: true,
+        region: 'Miền Bắc',
+        province: 'Sơn La',
+        includes: [
+            'Xe đưa đón từ Hà Nội',
+            'Khách sạn 3* & Homestay',
+            'Bữa ăn đặc sản địa phương',
+            'Hướng dẫn viên vui vẻ',
+            'Bảo hiểm du lịch'
+        ],
+        excludes: [
+            'Chi phí cá nhân',
+            'Đồ uống có cồn',
+            'Tiền tip'
+        ]
+    },
+    {
         title: 'Hà Giang - Cao Bằng 5N4Đ',
         description: 'Chinh phục vòng cung Hà Giang, thác Bản Giốc, động Pắc Bó và khám phá cao nguyên đá Đồng Văn.',
         destination: 'Hà Giang - Cao Bằng, Vietnam',
@@ -727,6 +848,183 @@ const completeTours = [
             day: 2
         }],
         rating: 4.5,
+        ratingsQuantity: 245,
+        category: 'Beach & Islands',
+        featured: true,
+        isInternational: false,
+        isPromotional: false,
+        region: 'Miền Trung',
+        province: 'Khánh Hòa',
+        includes: [
+            'Vé tham quan 4 đảo',
+            'Khách sạn 3* gần biển',
+            'Bữa ăn theo chương trình',
+            'Hướng dẫn viên',
+            'Bảo hiểm'
+        ],
+        excludes: [
+            'Vé máy bay',
+            'Chi phí cá nhân',
+            'Tiền tip'
+        ]
+    },
+    {
+        title: 'SALE SỐC: Phú Quốc 3N2Đ - Trọn Gói Resort',
+        description: 'Combo cực HOT: Vé máy bay + Resort 4* + Buffet sáng + Tham quan Nam đảo. Đặt ngay kẻo lỡ giá shock!',
+        destination: 'Kiên Giang, Vietnam',
+        duration: 3,
+        price: 3990000,
+        maxGroupSize: 25,
+        difficulty: 'easy',
+        images: [
+            'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800',
+            'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800'
+        ],
+        tourCode: 'PHU-QUOC-PROMO',
+        startDates: [new Date('2025-02-12'), new Date('2025-03-18'), new Date('2025-04-22')],
+        departures: generateDepartures(3990000),
+        itinerary: generateItinerary(3, 'Phú Quốc'),
+        policies: generatePolicies(),
+        startLocation: {
+            type: 'Point',
+            coordinates: [103.9650, 10.2128],
+            address: 'Phú Quốc, Kiên Giang',
+            description: 'Sân bay Phú Quốc'
+        },
+        locations: [
+            {
+                type: 'Point',
+                coordinates: [103.9650, 10.2128],
+                address: 'Bãi Sao',
+                description: 'Bãi Sao Phú Quốc',
+                day: 1
+            },
+            {
+                type: 'Point',
+                coordinates: [104.0297, 10.1778],
+                address: 'Nam đảo',
+                description: 'Tour Nam đảo',
+                day: 2
+            }
+        ],
+        rating: 4.9,
+        ratingsQuantity: 312,
+        category: 'Beach & Resort',
+        featured: true,
+        isInternational: false,
+        isPromotional: true,
+        region: 'Miền Nam',
+        province: 'Kiên Giang',
+        includes: [
+            'Vé máy bay khứ hồi',
+            'Resort 4* view biển',
+            'Buffet sáng hàng ngày',
+            'Tour Nam đảo',
+            'Xe đưa đón sân bay',
+            'Bảo hiểm du lịch'
+        ],
+        excludes: [
+            'Bữa trưa, tối',
+            'Chi phí cá nhân',
+            'Tiền tip'
+        ]
+    },
+    {
+        title: 'ƯU ĐÃI TẾT: Hội An - Đà Nẵng - Huế 5N4Đ',
+        description: 'Khuyến mãi đặc biệt Tết Nguyên Đán: Miền Trung 5 ngày giá siêu tiết kiệm. Phố cổ Hội An + Bà Nà Hills + Cố đô Huế.',
+        destination: 'Quảng Nam - Đà Nẵng - Huế, Vietnam',
+        duration: 5,
+        price: 4990000,
+        maxGroupSize: 22,
+        difficulty: 'easy',
+        images: [
+            'https://images.unsplash.com/photo-1583417319070-4a69db38a482?w=800',
+            'https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=800'
+        ],
+        tourCode: 'HOI-AN-DA-NANG-HUE-PROMO',
+        startDates: [new Date('2025-02-08'), new Date('2025-03-12'), new Date('2025-04-16')],
+        departures: generateDepartures(4990000),
+        itinerary: generateItinerary(5, 'Hội An - Đà Nẵng - Huế'),
+        policies: generatePolicies(),
+        startLocation: {
+            type: 'Point',
+            coordinates: [108.2022, 16.0544],
+            address: 'Đà Nẵng, Vietnam',
+            description: 'Sân bay Đà Nẵng'
+        },
+        locations: [
+            {
+                type: 'Point',
+                coordinates: [108.3280, 15.8801],
+                address: 'Hội An',
+                description: 'Phố cổ Hội An',
+                day: 1
+            },
+            {
+                type: 'Point',
+                coordinates: [107.9912, 15.9754],
+                address: 'Bà Nà Hills',
+                description: 'Cầu Vàng Bà Nà',
+                day: 2
+            },
+            {
+                type: 'Point',
+                coordinates: [107.5909, 16.4637],
+                address: 'Huế',
+                description: 'Đại Nội Huế',
+                day: 3
+            }
+        ],
+        rating: 4.8,
+        ratingsQuantity: 267,
+        category: 'Culture & Beach',
+        featured: true,
+        isInternational: false,
+        isPromotional: true,
+        region: 'Miền Trung',
+        province: 'Đà Nẵng',
+        includes: [
+            'Vé máy bay khứ hồi',
+            'Khách sạn 3-4* trung tâm',
+            'Vé Bà Nà Hills',
+            'Bữa ăn theo chương trình',
+            'Hướng dẫn viên nhiệt tình',
+            'Bảo hiểm du lịch'
+        ],
+        excludes: [
+            'Chi phí cá nhân',
+            'Đồ uống có cồn',
+            'Tiền tip'
+        ]
+    },
+    {
+        title: 'Nha Trang Biển Đảo 4N3Đ',
+        description: 'Tour biển đảo Nha Trang với 4 đảo, Vinpearl Land, tắm bùn I-Resort và thưởng thức hải sản tươi sống.',
+        destination: 'Khánh Hòa, Vietnam',
+        duration: 4,
+        price: 4500000,
+        maxGroupSize: 30,
+        difficulty: 'easy',
+        images: ['https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800'],
+        tourCode: 'NHA-TRANG-4D3N',
+        startDates: [new Date('2025-02-20'), new Date('2025-03-25'), new Date('2025-04-30')],
+        departures: generateDepartures(4500000),
+        itinerary: generateItinerary(4, 'Nha Trang'),
+        policies: generatePolicies(),
+        startLocation: {
+            type: 'Point',
+            coordinates: [109.1967, 12.2388],
+            address: 'Nha Trang, Khánh Hòa',
+            description: 'Trung tâm Nha Trang'
+        },
+        locations: [{
+            type: 'Point',
+            coordinates: [109.1967, 12.2388],
+            address: 'Vinpearl Land',
+            description: 'Công viên giải trí',
+            day: 2
+        }],
+        rating: 4.5,
         ratingsQuantity: 178,
         category: 'Beach & Islands',
         featured: false,
@@ -1100,6 +1398,66 @@ const completeTours = [
 
     // ==================== TOURS MIỀN NAM ====================
     {
+        title: 'FLASH SALE: Sài Gòn - Mũi Né 3N2Đ',
+        description: 'Deal HOT mùa hè: Khám phá đồi cát bay, suối tiên, làng chài và thưởng thức hải sản tươi ngon. Giá sốc chỉ 2.2 triệu!',
+        destination: 'Bình Thuận, Vietnam',
+        duration: 3,
+        price: 2290000,
+        maxGroupSize: 28,
+        difficulty: 'easy',
+        images: [
+            'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800',
+            'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800'
+        ],
+        tourCode: 'MUI-NE-PROMO',
+        startDates: [new Date('2025-02-15'), new Date('2025-03-20'), new Date('2025-04-25')],
+        departures: generateDepartures(2290000),
+        itinerary: generateItinerary(3, 'Mũi Né'),
+        policies: generatePolicies(),
+        startLocation: {
+            type: 'Point',
+            coordinates: [108.0820, 10.9333],
+            address: 'Phan Thiết, Bình Thuận',
+            description: 'Trung tâm Phan Thiết'
+        },
+        locations: [
+            {
+                type: 'Point',
+                coordinates: [108.2829, 10.9521],
+                address: 'Đồi cát bay',
+                description: 'Đồi cát Mũi Né',
+                day: 1
+            },
+            {
+                type: 'Point',
+                coordinates: [108.2452, 10.9635],
+                address: 'Suối Tiên',
+                description: 'Suối Tiên Mũi Né',
+                day: 2
+            }
+        ],
+        rating: 4.7,
+        ratingsQuantity: 223,
+        category: 'Beach & Adventure',
+        featured: true,
+        isInternational: false,
+        isPromotional: true,
+        region: 'Miền Nam',
+        province: 'Bình Thuận',
+        includes: [
+            'Xe đưa đón từ TP.HCM',
+            'Khách sạn 3* gần biển',
+            'Bữa ăn theo chương trình',
+            'Hướng dẫn viên vui tính',
+            'Bảo hiểm du lịch'
+        ],
+        excludes: [
+            'Chi phí cá nhân',
+            'Đồ uống có cồn',
+            'Tiền tip'
+        ]
+    },
+    {
         title: 'Phú Quốc Đảo Ngọc 5N4Đ',
         description: 'Nghỉ dưỡng tại đảo ngọc Phú Quốc với bãi Sao, Vinpearl Safari, Grand World và chợ đêm Phú Quốc.',
         destination: 'Kiên Giang, Vietnam',
@@ -1250,6 +1608,67 @@ const completeTours = [
         excludes: [
             'Chi phí cá nhân',
             'Đồ uống',
+            'Tiền tip'
+        ]
+    },
+    {
+        title: 'GIÁ HỦY DIỆT: Cần Thơ - Sóc Trăng - Bạc Liêu 3N2Đ',
+        description: 'Combo tiết kiệm nhất miền Tây: Chợ nổi Cái Răng, chùa Khmer, nhà cổ Bình Thủy, vườn trái cây. Tặng kèm tour đi thuyền!',
+        destination: 'Cần Thơ - Sóc Trăng - Bạc Liêu, Vietnam',
+        duration: 3,
+        price: 1990000,
+        maxGroupSize: 24,
+        difficulty: 'easy',
+        images: [
+            'https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=800',
+            'https://images.unsplash.com/photo-1583417319070-4a69db38a482?w=800'
+        ],
+        tourCode: 'CAN-THO-PROMO',
+        startDates: [new Date('2025-02-18'), new Date('2025-03-22'), new Date('2025-04-28')],
+        departures: generateDepartures(1990000),
+        itinerary: generateItinerary(3, 'Cần Thơ - Miền Tây'),
+        policies: generatePolicies(),
+        startLocation: {
+            type: 'Point',
+            coordinates: [105.7850, 10.0340],
+            address: 'Cần Thơ, Vietnam',
+            description: 'Bến Ninh Kiều'
+        },
+        locations: [
+            {
+                type: 'Point',
+                coordinates: [105.7850, 10.0340],
+                address: 'Chợ nổi Cái Răng',
+                description: 'Chợ nổi Cái Răng',
+                day: 1
+            },
+            {
+                type: 'Point',
+                coordinates: [105.9733, 9.6019],
+                address: 'Chùa Khmer',
+                description: 'Chùa Khmer Sóc Trăng',
+                day: 2
+            }
+        ],
+        rating: 4.6,
+        ratingsQuantity: 178,
+        category: 'Culture & River',
+        featured: true,
+        isInternational: false,
+        isPromotional: true,
+        region: 'Miền Nam',
+        province: 'Cần Thơ',
+        includes: [
+            'Xe đưa đón từ TP.HCM',
+            'Khách sạn 2-3*',
+            'Tour thuyền chợ nổi',
+            'Bữa ăn đặc sản miền Tây',
+            'Hướng dẫn viên địa phương',
+            'Bảo hiểm du lịch'
+        ],
+        excludes: [
+            'Chi phí cá nhân',
+            'Đồ uống có cồn',
             'Tiền tip'
         ]
     },
